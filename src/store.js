@@ -12,9 +12,14 @@
 import { createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import reducers from './reducers/index';
+import { loadState } from './localStorage';
+
+const persistedState = loadState();
+
+// console.log('Initial Persited State :: ', persistedState);
 
 // we are adding composeWithDevTools here to get easy access to the Redux dev tools
-const store = createStore(reducers, composeWithDevTools());
+const store = createStore(reducers, persistedState, composeWithDevTools());
 
 /* 
   a subscription method for checking the current state of redux

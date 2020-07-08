@@ -1,7 +1,11 @@
+import { clearPersistence, persistState, getPersistence } from '../localStorage';
+import { clearUser } from '../actions/actions';
+
 const auth = {};
 
 auth.createAuthHeader = () => {
-  const appJWTToken = localStorage.getItem('token');
+  const appJWTToken = getPersistence('token');
+  //localStorage.getItem('token');
 
   return `Bearer ${appJWTToken}`;
 };
@@ -17,7 +21,10 @@ auth.logout = (props) => {
     },
   }).catch((err) => console.log('Error from the request to Logout'));
 
-  localStorage.setItem('token', '');
+  // localStorage.setItem('token', '');
+  const intervalId = getPersistence('intervalId');
+  clearInterval(intervalId);
+  clearPersistence();
   props.clearUser();
 };
 
@@ -39,6 +46,8 @@ auth.silentRefreshTimer = (token_expiry, username) => {
       body: JSON.stringify({ username }),
     });
   }, intervalTime);
+
+  persistState('intervalId', id);
 };
 
-module.exports = auth;
+export default auth;

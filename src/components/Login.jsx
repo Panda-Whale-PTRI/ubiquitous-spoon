@@ -4,6 +4,7 @@ import { PageHeader, Form, Input, Row, Col, Button, Alert } from 'antd';
 import { connect } from 'react-redux';
 import * as actions from '../actions/actions';
 import auth from '../utlis/auth';
+import { persistState } from '../localStorage';
 
 const formItemLayout = {
   labelCol: {
@@ -82,7 +83,8 @@ const Login = (props) => {
       // Post Login Actions
       // dispatch setUsername redux action to update state of the user's keys in state
       props.setUsername(response);
-      localStorage.setItem('token', response.token);
+      // localStorage.setItem('token', response.token);
+      persistState('token', response.token);
       setRedirect('/');
       // Set Timer function here!!!
       auth.silentRefreshTimer(response.token_expiry, response.username);
