@@ -10,6 +10,7 @@
  */
 
 import * as types from '../constants/actionTypes';
+import { persistState } from '../localStorage';
 
 const initialState = {
   username: null,
@@ -48,6 +49,8 @@ const userReducer = (state = initialState, action) => {
         return usrPrfs;
       }, []);
       const username = action.payload.username;
+      persistState('username', action.payload.username);
+      persistState('foodPreference', foodPrf);
       return { ...state, username, foodPreference: foodPrf };
 
     case types.SET_USERPREFS:
@@ -72,6 +75,8 @@ const userReducer = (state = initialState, action) => {
         username: null,
         fullName: null,
         email: null,
+        userInfo: {},
+        foodPreference: {},
         // glutenFree: null,
         // vegan: null,
         // vegetarian: null,
@@ -84,14 +89,18 @@ const userReducer = (state = initialState, action) => {
         preference (Diets or Intolerance)
       */
       const { foodPreference } = state;
+      const newUserPreferences = {
+        ...foodPreference,
+        [Object.keys(action.payload || { diet: [] })[0]]: Object.values(
+          action.payload || { diet: [] }
+        )[0],
+      };
+      persistState('username', state.userInfo.username);
+      persistState('fullName', state.userInfo.name);
+      persistState('foodPreference', newUserPreferences);
       return {
         ...state,
-        foodPreference: {
-          ...foodPreference,
-          [Object.keys(action.payload || { diet: [] })[0]]: Object.values(
-            action.payload || { diet: [] }
-          )[0],
-        },
+        foodPreference: newUserPreferences,
       };
     case types.SET_USERINFO:
       return {
@@ -102,6 +111,8 @@ const userReducer = (state = initialState, action) => {
       /* 
         updates state keys after successful signin up of user
       */
+      persistState('username', state.userInfo.username);
+      persistState('fullName', state.userInfo.name);
       return {
         ...state,
         username: state.userInfo.username,
